@@ -1,0 +1,111 @@
+[package]
+name = "rs-project-startup"
+description = "A framework for quickly starting a Rust project"
+version = "0.1.0"
+edition = "2024"
+authors = ["zunkk12345@gmail.com"]
+homepage = "https://github.com/zunkk/rs-project-startup"
+license = "Apache-2.0"
+publish = false
+repository = "https://github.com/zunkk/rs-project-startup"
+build = "./build.rs"
+
+[workspace]
+members = ["crates/*"]
+
+[workspace.package]
+edition = "2024"
+authors = ["zunkk12345@gmail.com"]
+homepage = "https://github.com/zunkk/rs-project-startup"
+license = "Apache-2.0"
+publish = false
+repository = "https://github.com/zunkk/rs-project-startup"
+
+
+[build-dependencies]
+vergen-gitcl = { version = "2.1.0-beta.9", features = ["build", "cargo", "rustc", "si"] }
+
+[dependencies]
+# Internal crate dependencies.
+sidecar = { path = "crates/sidecar" }
+
+# External crate dependencies.
+tikv-jemallocator = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+clap = { workspace = true }
+toml = { workspace = true }
+axum = { workspace = true }
+axum-client-ip = { workspace = true }
+utoipa = { workspace = true }
+utoipa-swagger-ui = { workspace = true }
+thiserror = { workspace = true }
+jsonwebtoken = { workspace = true }
+chrono = { workspace = true }
+humantime-serde = { workspace = true }
+sea-orm = { workspace = true }
+uuid = { workspace = true }
+argon2 = { workspace = true }
+password-hash = { workspace = true }
+rand_core = { workspace = true }
+rand = { workspace = true }
+reqwest = { workspace = true }
+reqwest-middleware = { workspace = true }
+url = { workspace = true }
+strip-ansi-escapes = { workspace = true }
+color-eyre = { workspace = true }
+
+# Global workspace dependencies.
+[workspace.dependencies]
+tikv-jemallocator = "0.6.0"
+eyre = "0.6.12"
+thiserror = "2.0.17"
+tokio = { version = "1.48.0", features = ["full"] }
+tokio-util = { version = "0.7.16", features = ["full"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = { version = "1.0.145", features = [
+	"raw_value",
+	"arbitrary_precision",
+] }
+serde_with = "3.15.0"
+humantime-serde = "1.1.1"
+futures = "0.3.31"
+dotenv = "0.15.0"
+async-trait = "0.1.89"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.20", features = ["time", "local-time", "ansi"] }
+tracing-appender = "0.2.3"
+time = { version = "0.3.44", features = ["formatting", "macros"] }
+chrono = "0.4.42"
+indicatif = "0.18.0"
+rayon = "1.11.0"
+clap = { version = "4.5.49", features = ["derive"] }
+dashmap = { version = "7.0.0-rc2", features = ["rayon", "serde"] }
+once_cell = "1.21.3"
+tracing-panic = "0.1.2"
+config = { version = "0.15.18", features = ["toml", "convert-case", "async"] }
+toml = "0.9.8"
+color-eyre = "0.6.5"
+itertools = "0.14.0"
+axum = "0.8.6"
+axum-client-ip = { version = "1.1.3", features = ["serde", "forwarded-header"] }
+utoipa = { version = "5.4.0", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
+jsonwebtoken =  { version = "10.0.0", features = ["rust_crypto"] }
+sea-orm = { version = "2.0.0-rc.10", features = ["sqlx-postgres", "runtime-tokio", "macros", "with-chrono"] }
+uuid = { version = "1.18.1", features = ["v4"] }
+argon2 = "0.6.0-rc.1"
+password-hash = { version = "0.6.0-rc.1", features = ["rand_core"] }
+rand_core = { version = "0.9.3", features = ["os_rng", "std", "serde"] }
+rand = "0.10.0-rc.0"
+reqwest = { version = "0.12.24", default-features = false, features = ["json", "multipart"] }
+reqwest-middleware = { version = "0.4.2", features = ["json", "multipart"] }
+url = "2.5.7"
+strip-ansi-escapes = "0.2.1"
+
+# dev
+tempfile = "3.23.0"
+serial_test = { version = "3.2.0", features = ["async"] }
