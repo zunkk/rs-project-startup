@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+.DS_Store
+.zed
+**/*.so
+*.log
+*.nohup
+*/.env
+logs
+debug/
+target/
+**/*.rs.bk
+.env
