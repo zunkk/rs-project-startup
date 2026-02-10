@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::http::HeaderMap;
 use chrono::Duration;
-use rand::Rng;
+use rand::RngExt;
 use rand::distr::Alphanumeric;
 use serde::{Deserialize, Serialize};
 use sidecar::prelude::*;
