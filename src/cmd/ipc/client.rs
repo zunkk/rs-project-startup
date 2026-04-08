@@ -18,7 +18,7 @@ impl IpcContext {
         let http_client = reqwest::Client::builder()
             .unix_socket(socket_path)
             .build()
-            .wrap_err_with(|| format!("Failed to build ipc client: {}", display_path))?;
+            .wrap_err_with(|| format!("failed to build ipc client: {}", display_path))?;
         let client = ClientBuilder::new(http_client).build();
 
         let mut configuration = configuration::Configuration::new();

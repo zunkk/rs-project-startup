@@ -106,12 +106,11 @@ impl<C: IConfig> Repo<C> {
 
     pub async fn save(&self) -> Result<()> {
         let config_path = self.config_path();
-        if let Some(parent) = config_path.parent() {
-            if let Err(e) = fs::create_dir_all(parent).await {
-                if e.kind() != io::ErrorKind::AlreadyExists {
-                    return Err(e.into());
-                }
-            }
+        if let Some(parent) = config_path.parent()
+            && let Err(e) = fs::create_dir_all(parent).await
+            && e.kind() != io::ErrorKind::AlreadyExists
+        {
+            return Err(e.into());
         }
         let cfg_data = toml::to_string(&self.cfg)?;
         fs::write(&config_path, cfg_data).await?;
@@ -176,7 +175,7 @@ mod tests {
 
     #[async_trait]
     impl IConfig for TestConfig {
-        async fn init(&mut self, repo_root: PathBuf) -> Result<()> {
+        async fn init(&mut self, _repo_root: PathBuf) -> Result<()> {
             self.value += 1;
             Ok(())
         }
@@ -184,7 +183,7 @@ mod tests {
 
     #[async_trait]
     impl IConfig for DefaultOnlyConfig {
-        async fn init(&mut self, repo_root: PathBuf) -> Result<()> {
+        async fn init(&mut self, _repo_root: PathBuf) -> Result<()> {
             Ok(())
         }
     }

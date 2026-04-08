@@ -31,7 +31,6 @@ use tokio::fs;
 use tokio::net::{TcpListener, UnixListener, UnixStream};
 use tokio::sync::RwLock;
 use tracing::{info, warn};
-use utoipa::openapi::Components;
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 use utoipa::{Modify, OpenApi};
 use utoipa_swagger_ui::SwaggerUi;
@@ -57,7 +56,7 @@ struct BearerAuthAddon;
 
 impl Modify for BearerAuthAddon {
     fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
-        let mut components = openapi.components.take().unwrap_or_else(Components::new);
+        let mut components = openapi.components.take().unwrap_or_default();
 
         if !components.security_schemes.contains_key("bearer_auth") {
             components.add_security_scheme(
@@ -163,20 +162,20 @@ impl Component for Server {
         let ipc_file_path = self.repo.ipc_file_path();
         if self.is_socket_in_use().await {
             bail!(
-                "Ipc file is in use, may be other process is running: {}",
+                "ipc file is in use, may be other process is running: {}",
                 ipc_file_path.display()
             );
         }
 
         if ipc_file_path.exists() {
             fs::remove_file(&ipc_file_path).await.wrap_err(format!(
-                "Failed to remove ipc file: {}",
+                "failed to remove ipc file: {}",
                 ipc_file_path.display()
             ))?;
         }
 
         let listener = UnixListener::bind(ipc_file_path.clone()).wrap_err(format!(
-            "Failed to bind ipc file, may be other process is running: {}",
+            "failed to bind ipc file, may be other process is running: {}",
             ipc_file_path.display()
         ))?;
         info!("ipc server listen on: {}", ipc_file_path.display());
@@ -250,10 +249,10 @@ impl Component for Server {
 
     async fn stop(&self) -> Result<()> {
         let ipc_file_path = self.repo.ipc_file_path();
-        if ipc_file_path.exists() {
-            if let Err(e) = fs::remove_file(ipc_file_path).await {
-                warn!("failed to remove ipc file: {}", e);
-            }
+        if ipc_file_path.exists()
+            && let Err(e) = fs::remove_file(ipc_file_path).await
+        {
+            warn!("failed to remove ipc file: {}", e);
         }
 
         Ok(())
@@ -371,7 +370,7 @@ pub fn one_line_error(err: &Report) -> String {
             out.push_str(": ");
         }
         let mut msg = e.to_string();
-        msg = msg.replace('\n', " ").replace('\r', " ");
+        msg = msg.replace(['\n', '\r'], " ");
         out.push_str(&msg);
     }
     out
@@ -381,13 +380,13 @@ fn extract_location_from_debug(err: &Report) -> Option<String> {
     let debug = format!("{:?}", err);
     let mut lines = debug.lines();
     while let Some(line) = lines.next() {
-        if line.trim() == "Location:" {
-            if let Some(location_line) = lines.next() {
-                let cleaned = strip_str(location_line);
-                let trimmed = cleaned.trim();
-                if !trimmed.is_empty() {
-                    return Some(trimmed.to_string());
-                }
+        if line.trim() == "Location:"
+            && let Some(location_line) = lines.next()
+        {
+            let cleaned = strip_str(location_line);
+            let trimmed = cleaned.trim();
+            if !trimmed.is_empty() {
+                return Some(trimmed.to_string());
             }
         }
     }
@@ -554,7 +553,7 @@ where
                     headers,
                     query.map(|Query(query)| query),
                     |rejection| rejection.body_text(),
-                    move |state, ctx, headers, query| handler(state, ctx, headers, query),
+                    &handler,
                 )
                 .await
             }
@@ -590,7 +589,7 @@ where
                     headers,
                     json.map(|Json(json)| json),
                     |rejection| rejection.body_text(),
-                    move |state, ctx, headers, json| handler(state, ctx, headers, json),
+                    &handler,
                 )
                 .await
             }

@@ -3,29 +3,29 @@ use thiserror::Error;
 #[derive(Error, Debug, Clone)]
 pub enum Error {
     // -------------- system --------------
-    #[error("Unknown error: {0}")]
+    #[error("unknown error: {0}")]
     Unknown(String),
 
-    #[error("Invalid request parameter: {0}")]
+    #[error("invalid request parameter: {0}")]
     InvidRequestParameter(String),
 
-    #[error("Unauthorized")]
+    #[error("unauthorized")]
     Unauthorized,
 
-    #[error("Api must request from ipc")]
+    #[error("api must request from ipc")]
     ApiMustRequestFromIPC,
 
-    #[error("Db connection not initialized")]
+    #[error("db connection not initialized")]
     DBConnectionNotInitialized,
 
     // -------------- user --------------
-    #[error("User not found")]
+    #[error("user not found")]
     UserNotFound,
 
-    #[error("User already exists")]
+    #[error("user already exists")]
     UserAlreadyExists,
 
-    #[error("User invalid password")]
+    #[error("user invalid password")]
     UserInvalidPassword,
 }
 

@@ -11,9 +11,12 @@
 use serde::{Deserialize, Serialize};
 
 ///
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, Default,
+)]
 pub enum AuthType {
     #[serde(rename = "Username")]
+    #[default]
     Username,
 }
 
@@ -22,11 +25,5 @@ impl std::fmt::Display for AuthType {
         match self {
             Self::Username => write!(f, "Username"),
         }
-    }
-}
-
-impl Default for AuthType {
-    fn default() -> AuthType {
-        Self::Username
     }
 }

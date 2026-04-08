@@ -63,10 +63,8 @@ impl LifecycleManager {
 
                 task_tracker.close();
 
-                tokio::spawn(async move {
-                    tokio::time::sleep(std::time::Duration::from_secs(10)).await;
-                    _ = cancel_timeout_signal_sender.send(()).await;
-                })
+                tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+                _ = cancel_timeout_signal_sender.send(()).await;
             }
         });
 

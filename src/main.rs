@@ -138,5 +138,5 @@ fn resolve_repo_root(repo_root: Option<PathBuf>) -> Result<PathBuf> {
         env::current_dir().unwrap_or(PathBuf::from("./"))
     };
 
-    fs::canonicalize(candidate).wrap_err("Failed to canonicalize repo_root")
+    fs::canonicalize(candidate).wrap_err("failed to canonicalize repo_root")
 }

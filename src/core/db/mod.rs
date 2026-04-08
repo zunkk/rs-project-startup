@@ -123,7 +123,7 @@ impl Component for DB {
         opts.sqlx_logging(self.repo.cfg.db.log_sql);
         let connection = Database::connect(opts)
             .await
-            .wrap_err("Connect to database failed")?;
+            .wrap_err("connect to database failed")?;
 
         {
             let mut guard = self.connection.write().await;

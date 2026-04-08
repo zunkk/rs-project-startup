@@ -11,14 +11,14 @@ pub fn create_index_statements() -> Vec<IndexCreateStatement> {
     vec![
         Index::create()
             .name("user_auth_type_index")
-            .table(Entity::default().table_ref())
+            .table(Entity.table_ref())
             .col(Column::AuthType)
             .col(Column::AuthId)
             .if_not_exists()
             .to_owned(),
         Index::create()
             .name("user_auth_user_id_index")
-            .table(Entity::default().table_ref())
+            .table(Entity.table_ref())
             .col(Column::UserId)
             .col(Column::AuthType)
             .if_not_exists()

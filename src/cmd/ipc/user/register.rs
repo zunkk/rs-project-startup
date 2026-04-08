@@ -25,7 +25,7 @@ pub struct RegisterArgs {
 fn parse_auth_type(value: &str) -> std::result::Result<models::AuthType, String> {
     match value.to_ascii_lowercase().as_str() {
         "username" => Ok(models::AuthType::Username),
-        _ => Err(format!("Invalid auth type: {value}")),
+        _ => Err(format!("invalid auth type: {value}")),
     }
 }
 
@@ -34,7 +34,7 @@ fn parse_role(value: &str) -> std::result::Result<models::Role, String> {
         "admin" => Ok(models::Role::Admin),
         "manager" => Ok(models::Role::Manager),
         "user" => Ok(models::Role::User),
-        other => Err(format!("Invalid role: {other}")),
+        other => Err(format!("invalid role: {other}")),
     }
 }
 
@@ -61,7 +61,7 @@ pub async fn run(args: RegisterArgs, ctx: IpcContext) -> Result<()> {
     .await
     .map_err(|err| match err {
         apis::Error::ResponseError(resp) => eyre!(
-            "Request failed，status code: {}，body: {}",
+            "request failed，status code: {}，body: {}",
             resp.status,
             resp.content
         ),
@@ -78,7 +78,7 @@ pub async fn run(args: RegisterArgs, ctx: IpcContext) -> Result<()> {
     let data = response
         .data
         .map(|boxed| *boxed)
-        .ok_or_else(|| eyre!("Not found data"))?;
+        .ok_or_else(|| eyre!("not found data"))?;
 
     println!("user registered，user_id: {}", data.user_id);
 

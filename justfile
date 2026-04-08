@@ -29,7 +29,7 @@ clippy:
 fix:
     @cargo +nightly fix --allow-staged --allow-no-vcs --workspace
 
-opt-code: fix fmt
+opt-code: fix fmt clippy
 
 check:
     @cargo check --workspace

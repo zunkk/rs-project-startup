@@ -151,7 +151,7 @@ pub async fn login(
 
     let (jwt_token, expired_time) = jwt::generate_with_hmac_key(
         &state.repo.cfg.http.jwt.token_hmac_key,
-        Duration::from_std(state.repo.cfg.http.jwt.token_valid_duration.into())?,
+        Duration::from_std(state.repo.cfg.http.jwt.token_valid_duration)?,
         &user_id,
         (),
     )?;
@@ -193,7 +193,7 @@ pub async fn refresh_token(
 ) -> Result<RefreshTokenRes> {
     let (jwt_token, expired_time) = jwt::generate_with_hmac_key(
         &state.repo.cfg.http.jwt.token_hmac_key,
-        Duration::from_std(state.repo.cfg.http.jwt.token_valid_duration.into())?,
+        Duration::from_std(state.repo.cfg.http.jwt.token_valid_duration)?,
         &ctx.user_id,
         (),
     )?;

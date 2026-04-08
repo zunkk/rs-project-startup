@@ -39,6 +39,12 @@ pub struct Sidecar {
     inner: Arc<SidecarInner>,
 }
 
+impl Default for Sidecar {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Sidecar {
     pub fn new() -> Self {
         Sidecar {
@@ -245,7 +251,7 @@ impl Sidecar {
             if let Err(err) = component
                 .start()
                 .await
-                .wrap_err_with(|| format!("Failed to start component[{name}] "))
+                .wrap_err_with(|| format!("failed to start component[{name}] "))
             {
                 if let Err(stop_err) = self.stop_components(started).await {
                     error!(error = ?stop_err, "rollback components failed after start error");
@@ -267,7 +273,7 @@ impl Sidecar {
             component
                 .stop()
                 .await
-                .wrap_err_with(|| format!("Failed to stop component[{name}] "))?;
+                .wrap_err_with(|| format!("failed to stop component[{name}] "))?;
             info!(component = ?name, elapsed = ?start_time.elapsed(), "component stopped");
         }
 
@@ -315,10 +321,9 @@ impl TaskHandle {
             return true;
         }
 
-        match tokio::time::timeout(timeout, self.inner.completion_notify.notified()).await {
-            Ok(_) => true,
-            Err(_) => false,
-        }
+        tokio::time::timeout(timeout, self.inner.completion_notify.notified())
+            .await
+            .is_ok()
     }
 
     fn cancellation_token(&self) -> CancellationToken {
@@ -454,12 +459,12 @@ mod tests {
         assert_eq!(
             component.start_count.load(Ordering::SeqCst),
             1,
-            "Component not started"
+            "component not started"
         );
         assert_eq!(
             component.stop_count.load(Ordering::SeqCst),
             1,
-            "Component not stopped"
+            "component not stopped"
         );
 
         Ok(())
@@ -487,7 +492,7 @@ mod tests {
         let cancelled = handle.cancel(Duration::from_millis(100)).await;
         assert!(
             cancelled,
-            "Core task cancellation not completed within timeout"
+            "core task cancellation not completed within timeout"
         );
 
         Ok(())
@@ -517,7 +522,7 @@ mod tests {
 
         assert!(
             *counter.read().await >= 2,
-            "Scheduled task not executed multiple times"
+            "scheduled task not executed multiple times"
         );
 
         Ok(())
@@ -545,13 +550,13 @@ mod tests {
         let cancelled = handle.cancel(Duration::from_millis(100)).await;
         assert!(
             cancelled,
-            "Scheduled task cancellation not completed within timeout"
+            "scheduled task cancellation not completed within timeout"
         );
 
         tokio::time::sleep(Duration::from_millis(150)).await;
         assert!(
             *counter.read().await <= 1,
-            "Scheduled task continues to execute after cancellation"
+            "scheduled task continues to execute after cancellation"
         );
 
         Ok(())
@@ -588,7 +593,7 @@ mod tests {
                 } else {
                     let mut guard = state.error_counter.write().await;
                     *guard += 1;
-                    eyre::bail!("scheduled task expected error")
+                    bail!("scheduled task expected error")
                 }
             },
         );
@@ -602,11 +607,11 @@ mod tests {
 
         assert!(
             success_count >= 1,
-            "Scheduled task success branch not executed"
+            "scheduled task success branch not executed"
         );
         assert!(
             error_count >= 1,
-            "Scheduled task error branch not triggered"
+            "scheduled task error branch not triggered"
         );
 
         Ok(())

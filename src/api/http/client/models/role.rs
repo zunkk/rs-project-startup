@@ -11,9 +11,12 @@
 use serde::{Deserialize, Serialize};
 
 ///
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, Default,
+)]
 pub enum Role {
     #[serde(rename = "Admin")]
+    #[default]
     Admin,
     #[serde(rename = "Manager")]
     Manager,
@@ -28,11 +31,5 @@ impl std::fmt::Display for Role {
             Self::Manager => write!(f, "Manager"),
             Self::User => write!(f, "User"),
         }
-    }
-}
-
-impl Default for Role {
-    fn default() -> Role {
-        Self::Admin
     }
 }

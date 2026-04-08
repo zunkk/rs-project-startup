@@ -129,11 +129,11 @@ mod tests {
             max_log_files: 7,
         };
 
-        let json = serde_json::to_string(&log).expect("Failed to serialize log configuration");
+        let json = serde_json::to_string(&log).expect("failed to serialize log configuration");
         assert!(json.contains("\"info\""));
 
         let parsed: Log =
-            serde_json::from_str(&json).expect("Failed to deserialize log configuration");
+            serde_json::from_str(&json).expect("failed to deserialize log configuration");
         assert_eq!(parsed.level, Level::INFO);
         assert_eq!(parsed.max_log_files, 7);
     }

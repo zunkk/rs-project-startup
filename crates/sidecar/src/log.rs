@@ -36,7 +36,7 @@ pub fn setup(
     log_dir: Option<PathBuf>,
     max_log_files: u64,
 ) -> Option<WorkerGuard> {
-    let mut init_flag = PREPARE_STATE.lock().expect("Logger state poisoned");
+    let mut init_flag = PREPARE_STATE.lock().expect("logger state poisoned");
     if *init_flag {
         return None;
     }
@@ -51,44 +51,44 @@ pub fn setup(
 
     // log output to file
     let mut guard = None;
-    if let Some(log_dir) = log_dir {
-        if !cfg!(test) {
-            let log_dir_str = log_dir.display().to_string();
-            fs::create_dir_all(log_dir).expect("Failed to create log dir: {log_dir_str}");
+    if let Some(log_dir) = log_dir
+        && !cfg!(test)
+    {
+        let log_dir_str = log_dir.display().to_string();
+        fs::create_dir_all(log_dir).expect("failed to create log dir: {log_dir_str}");
 
-            let now = Local::now();
-            let today_log_file_name = now.format("%Y-%m-%d").to_string();
-            let now_time = now.format("%Y-%m-%d %H:%M:%S%.3f %:z").to_string();
-            let today_log_file_path = format!("{log_dir_str}/{today_log_file_name}.log");
-            if fs::metadata(&today_log_file_path).is_ok() {
-                fs::rename(
-                    &today_log_file_path,
-                    format!("{log_dir_str}/{now_time}.log"),
-                )
-                .wrap_err("Failed to rename log file")
-                .unwrap();
-            }
-
-            let (non_blocking_appender, _guard) = tracing_appender::non_blocking(
-                RollingFileAppender::builder()
-                    .rotation(Rotation::DAILY)
-                    .filename_suffix("log")
-                    .max_log_files(max_log_files as usize)
-                    .build(log_dir_str)
-                    .expect("Initializing rolling file appender failed"),
-            );
-            guard = Some(_guard);
-            layers.push(
-                tracing_subscriber::fmt::layer()
-                    .with_ansi(true)
-                    .fmt_fields(format::Pretty::default())
-                    .with_timer(local_time.clone())
-                    .with_target(false)
-                    .with_writer(non_blocking_appender)
-                    .with_filter(filter.clone())
-                    .boxed(),
-            );
+        let now = Local::now();
+        let today_log_file_name = now.format("%Y-%m-%d").to_string();
+        let now_time = now.format("%Y-%m-%d %H:%M:%S%.3f %:z").to_string();
+        let today_log_file_path = format!("{log_dir_str}/{today_log_file_name}.log");
+        if fs::metadata(&today_log_file_path).is_ok() {
+            fs::rename(
+                &today_log_file_path,
+                format!("{log_dir_str}/{now_time}.log"),
+            )
+            .wrap_err("failed to rename log file")
+            .unwrap();
         }
+
+        let (non_blocking_appender, _guard) = tracing_appender::non_blocking(
+            RollingFileAppender::builder()
+                .rotation(Rotation::DAILY)
+                .filename_suffix("log")
+                .max_log_files(max_log_files as usize)
+                .build(log_dir_str)
+                .expect("initializing rolling file appender failed"),
+        );
+        guard = Some(_guard);
+        layers.push(
+            tracing_subscriber::fmt::layer()
+                .with_ansi(true)
+                .fmt_fields(format::Pretty::default())
+                .with_timer(local_time)
+                .with_target(false)
+                .with_writer(non_blocking_appender)
+                .with_filter(filter.clone())
+                .boxed(),
+        );
     }
 
     // log output to console
@@ -96,7 +96,7 @@ pub fn setup(
         tracing_subscriber::fmt::layer()
             .with_ansi(true)
             .fmt_fields(format::Pretty::default())
-            .with_timer(local_time.clone())
+            .with_timer(local_time)
             .with_target(false)
             .with_filter(filter.clone())
             .boxed(),

@@ -23,7 +23,7 @@ pub async fn run(cmd: Cmd, repo: Repo<Config>) -> Result<()> {
     let ctx = client::IpcContext::new(socket_path)?;
     ctx.ping()
         .await
-        .wrap_err("Failed to ping IPC, app is not running")?;
+        .wrap_err("failed to ping IPC, app is not running")?;
 
     match cmd {
         Cmd::User(user_cmd) => user::run(user_cmd, ctx).await,
