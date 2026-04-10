@@ -40,6 +40,7 @@ impl RunArgs {
             repo.cfg.log.level,
             Some(repo.root.join("logs")),
             repo.cfg.log.max_log_files,
+            None,
         );
 
         let sidecar = Sidecar::new();

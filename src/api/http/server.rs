@@ -486,6 +486,7 @@ where
     Response::<Res>::err(&err).into_response()
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn handle_request<Req, Res, Rej, MapRejection, H, Fut>(
     state: AppState,
     cfg: ApiConfig,
@@ -605,43 +606,38 @@ where
 {
     type Rejection = (axum::http::StatusCode, String);
 
-    fn from_request_parts(
-        parts: &mut Parts,
-        state: &S,
-    ) -> impl Future<Output = Result<Self, Self::Rejection>> + Send {
-        async move {
-            if let Ok(RightmostXForwardedFor(ip)) =
-                RightmostXForwardedFor::from_request_parts(parts, state).await
-            {
-                return Ok(ClientIp(ip));
-            }
-
-            if let Ok(RightmostForwarded(ip)) =
-                RightmostForwarded::from_request_parts(parts, state).await
-            {
-                return Ok(ClientIp(ip));
-            }
-
-            if let Ok(TrueClientIp(ip)) = TrueClientIp::from_request_parts(parts, state).await {
-                return Ok(ClientIp(ip));
-            }
-
-            if let Ok(CloudFrontViewerAddress(ip)) =
-                CloudFrontViewerAddress::from_request_parts(parts, state).await
-            {
-                return Ok(ClientIp(ip));
-            }
-
-            if let Ok(FlyClientIp(ip)) = FlyClientIp::from_request_parts(parts, state).await {
-                return Ok(ClientIp(ip));
-            }
-
-            if let Some(ConnectInfo(addr)) = parts.extensions.get::<ConnectInfo<SocketAddr>>() {
-                return Ok(ClientIp(addr.ip()));
-            }
-
-            Ok(ClientIp(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))))
+    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
+        if let Ok(RightmostXForwardedFor(ip)) =
+            RightmostXForwardedFor::from_request_parts(parts, state).await
+        {
+            return Ok(ClientIp(ip));
         }
+
+        if let Ok(RightmostForwarded(ip)) =
+            RightmostForwarded::from_request_parts(parts, state).await
+        {
+            return Ok(ClientIp(ip));
+        }
+
+        if let Ok(TrueClientIp(ip)) = TrueClientIp::from_request_parts(parts, state).await {
+            return Ok(ClientIp(ip));
+        }
+
+        if let Ok(CloudFrontViewerAddress(ip)) =
+            CloudFrontViewerAddress::from_request_parts(parts, state).await
+        {
+            return Ok(ClientIp(ip));
+        }
+
+        if let Ok(FlyClientIp(ip)) = FlyClientIp::from_request_parts(parts, state).await {
+            return Ok(ClientIp(ip));
+        }
+
+        if let Some(ConnectInfo(addr)) = parts.extensions.get::<ConnectInfo<SocketAddr>>() {
+            return Ok(ClientIp(addr.ip()));
+        }
+
+        Ok(ClientIp(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))))
     }
 }
 

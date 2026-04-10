@@ -28,13 +28,14 @@ impl FormatTime for LocalTimer {
 }
 
 pub fn default_setup() -> Option<WorkerGuard> {
-    setup(Level::DEBUG, None, 14)
+    setup(Level::DEBUG, None, 14, None)
 }
 
 pub fn setup(
     log_level: Level,
     log_dir: Option<PathBuf>,
     max_log_files: u64,
+    custom_filter: Option<filter::Targets>,
 ) -> Option<WorkerGuard> {
     let mut init_flag = PREPARE_STATE.lock().expect("logger state poisoned");
     if *init_flag {
@@ -44,8 +45,11 @@ pub fn setup(
     drop(init_flag);
 
     let mut layers = Vec::new();
-
-    let filter = filter::Targets::new().with_default(log_level);
+    let filter = if let Some(filter) = custom_filter {
+        filter
+    } else {
+        filter::Targets::new().with_default(log_level)
+    };
 
     let local_time = LocalTimer;
 
