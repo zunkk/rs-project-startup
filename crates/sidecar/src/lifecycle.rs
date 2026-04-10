@@ -19,7 +19,7 @@ impl LifecycleManager {
     }
 
     pub async fn cancel(&self, from_component: &str) {
-        info!("component[{from_component}] request cancel");
+        info!("Component[{from_component}] request cancel");
         self.cancel_signal_cancellation_token.cancel();
     }
 
@@ -50,14 +50,14 @@ impl LifecycleManager {
                 select! {
                     _ = sigterm.recv() => {
                         cancel_signal_cancellation_token.cancel();
-                        info!(signal = "SIGTERM", "receive cancel signal");
+                        info!(signal = "SIGTERM", "Receive cancel signal");
                     },
                     _ = sigint.recv() => {
                         cancel_signal_cancellation_token.cancel();
-                        info!(signal = "SIGINT", "receive cancel signal");
+                        info!(signal = "SIGINT", "Receive cancel signal");
                     },
                     _ = cancel_signal_cancellation_token.cancelled() => {
-                        info!(signal = "component", "receive cancel signal");
+                        info!(signal = "component", "Receive cancel signal");
                     },
                 }
 
@@ -71,11 +71,11 @@ impl LifecycleManager {
         select! {
             _ = cancel_timeout_signal_receiver.recv() => {
                 // timeout
-                info!("component tasks cancel timeout, will force cancel");
+                info!("Component tasks cancel timeout, will force cancel");
             }
             _ = self.task_tracker.wait() => {
                 // wait all task down
-                info!("all component tasks down");
+                info!("All component tasks down");
             }
         }
     }

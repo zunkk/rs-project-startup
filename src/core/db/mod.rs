@@ -100,7 +100,7 @@ impl DB {
         }
 
         if created {
-            info!(table = m.table_name(), "table created");
+            info!(table = m.table_name(), "Table created");
         }
 
         Ok(())
@@ -130,7 +130,7 @@ impl Component for DB {
             *guard = Some(connection.clone());
         }
 
-        info!(dsn = ?self.dsn(), "db connected");
+        info!(dsn = ?self.dsn(), "Db connected");
 
         Ok(())
     }

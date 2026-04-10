@@ -52,14 +52,14 @@ impl RunArgs {
                 let repo = repo.clone();
                 move || async move {
                     if let Err(e) = repo.write_pid().await {
-                        warn!("failed to write pid file: {}", e);
+                        warn!("Failed to write pid file: {}", e);
                     }
                     let v = version::current();
-                    info!("repo_root: {}", repo.root.display());
-                    info!("{} version: {}", v.app_name, v.version);
-                    info!("git_branch：{}", v.git_branch);
-                    info!("git_commit：{}", v.git_commit);
-                    info!("build_time：{}", v.build_time);
+                    info!("Repo_root: {}", repo.root.display());
+                    info!("{} Version: {}", v.app_name, v.version);
+                    info!("Git_branch：{}", v.git_branch);
+                    info!("Git_commit：{}", v.git_commit);
+                    info!("Build_time：{}", v.build_time);
                 }
             })
             .await;
@@ -67,7 +67,7 @@ impl RunArgs {
         sidecar.run().await?;
 
         if let Err(e) = repo.remove_pid().await {
-            warn!("failed to remove pid file: {}", e);
+            warn!("Failed to remove pid file: {}", e);
         }
 
         Ok(())

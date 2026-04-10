@@ -142,7 +142,7 @@ impl Server {
                 if err.kind() == io::ErrorKind::ConnectionRefused {
                     false
                 } else {
-                    warn!(err= ?err, "check socket connect failed");
+                    warn!(err= ?err, "Check socket connect failed");
                     false
                 }
             }
@@ -178,7 +178,7 @@ impl Component for Server {
             "failed to bind ipc file, may be other process is running: {}",
             ipc_file_path.display()
         ))?;
-        info!("ipc server listen on: {}", ipc_file_path.display());
+        info!("Ipc server listen on: {}", ipc_file_path.display());
         self.sidecar.spawn_core_task("ipc-listener", {
             let root_router = root_router.clone().with_state(AppState {
                 core: self.core.clone(),
@@ -189,7 +189,7 @@ impl Component for Server {
                 axum::serve(listener, root_router)
                     .with_graceful_shutdown(async move {
                         if let Err(e) = sidecar.canceled().await {
-                            warn!("ipc server cancel error: {}", e);
+                            warn!("Ipc server cancel error: {}", e);
                         }
                     })
                     .await
@@ -200,7 +200,7 @@ impl Component for Server {
             let listener =
                 TcpListener::bind(format!("0.0.0.0:{}", self.repo.cfg.http.port)).await?;
             info!(
-                "http server listen on: http://127.0.0.1:{}",
+                "Http server listen on: http://127.0.0.1:{}",
                 self.repo.cfg.http.port
             );
             self.sidecar.spawn_core_task("http-listener", {
@@ -215,7 +215,7 @@ impl Component for Server {
                 );
                 let swagger_enable = self.repo.cfg.http.swagger.enable;
                 if swagger_enable {
-                    info!("swagger ui listen on: {}/swagger-ui", host);
+                    info!("Swagger ui listen on: {}/swagger-ui", host);
                 }
                 async move {
                     if swagger_enable {
@@ -236,7 +236,7 @@ impl Component for Server {
                     )
                     .with_graceful_shutdown(async move {
                         if let Err(e) = sidecar.canceled().await {
-                            warn!("http server cancel error: {}", e);
+                            warn!("Http server cancel error: {}", e);
                         }
                     })
                     .await
@@ -252,7 +252,7 @@ impl Component for Server {
         if ipc_file_path.exists()
             && let Err(e) = fs::remove_file(ipc_file_path).await
         {
-            warn!("failed to remove ipc file: {}", e);
+            warn!("Failed to remove ipc file: {}", e);
         }
 
         Ok(())
@@ -428,7 +428,7 @@ where
                 client_ip = client_ip,
                 log_fields = debug(&log_fields),
                 elapsed = ?elapsed,
-                "api request"
+                "Api request"
             );
             Response::ok(data).into_response()
         }
@@ -449,7 +449,7 @@ where
                 log_fields = debug(&log_fields),
                 log_fields_on_error = debug(&log_fields_on_error),
                 elapsed = ?elapsed,
-                "api request failed"
+                "Api request failed"
             );
 
             Response::<Res> {
@@ -480,7 +480,7 @@ where
         err = ?err,
         client_ip = client_ip,
         elapsed = 0,
-        "api request failed"
+        "Api request failed"
     );
 
     Response::<Res>::err(&err).into_response()

@@ -125,15 +125,15 @@ impl Sidecar {
         let handle = TaskHandle::new();
         let cancel_token = handle.cancellation_token();
         let completion_handle = handle.clone();
-        info!(component = ?component_name, task = ?task_name, "core task run");
+        info!(component = ?component_name, task = ?task_name, "Core task run");
         self.inner.lifecycle_manager.spawn_task(async move {
             let mut task = Box::pin(task);
             tokio::select! {
                 _ = cancel_token.cancelled() => {
-                    info!(component = ?component_name, task = ?task_name, "core task cancelled");
+                    info!(component = ?component_name, task = ?task_name, "Core task cancelled");
                 }
                 _ = &mut task => {
-                    info!(component = ?component_name, task = ?task_name, "core task down");
+                    info!(component = ?component_name, task = ?task_name, "Core task down");
                 }
             }
             completion_handle.mark_complete();
@@ -166,18 +166,18 @@ impl Sidecar {
                 component = ?component_name,
                 task = ?task_name,
                 interval = ?interval,
-                "scheduled task run"
+                "Scheduled task run"
             );
             let mut ticker = tokio::time::interval(interval);
 
             loop {
                 tokio::select! {
                     _ = sidecar.canceled() => {
-                        info!(component = ?component_name, task = ?task_name, "scheduled task down");
+                        info!(component = ?component_name, task = ?task_name, "Scheduled task down");
                         break;
                     }
                     _ = cancel_token.cancelled() => {
-                        info!(component = ?component_name, task = ?task_name, "scheduled task cancelled");
+                        info!(component = ?component_name, task = ?task_name, "Scheduled task cancelled");
                         break;
                     }
                     _ = ticker.tick() => {
@@ -188,7 +188,7 @@ impl Sidecar {
                                 component = ?component_name,
                                 task = ?task_name,
                                 error = ?err,
-                                "scheduled task tick failed"
+                                "Scheduled task tick failed"
                             )
                         }
                     }
@@ -202,11 +202,11 @@ impl Sidecar {
     }
 
     pub async fn run(self) -> Result<()> {
-        info!("components starting");
+        info!("Components starting");
         let start_time = Instant::now();
         let active_components = self.start_components().await?;
         let elapsed = start_time.elapsed();
-        info!(elapsed = ?elapsed, "components started");
+        info!(elapsed = ?elapsed, "Components started");
 
         for future in {
             let mut guard = self.inner.no_block_app_ready_callbacks.lock().await;
@@ -222,17 +222,17 @@ impl Sidecar {
             future.await;
         }
 
-        info!("app is running");
+        info!("App is running");
         self.inner.lifecycle_manager.wait().await;
 
-        info!("components stopping");
+        info!("Components stopping");
         let start_time = Instant::now();
         self.stop_components(active_components).await?;
         let elapsed = start_time.elapsed();
-        info!(elapsed = ?elapsed, "components stopped");
+        info!(elapsed = ?elapsed, "Components stopped");
         self.inner.components.write().await.clear();
 
-        info!("app down");
+        info!("App down");
         Ok(())
     }
 
@@ -247,18 +247,18 @@ impl Sidecar {
         for component in &handles {
             let name = component.name().to_string();
             let start_time = Instant::now();
-            info!(component = ?name, "component starting");
+            info!(component = ?name, "Component starting");
             if let Err(err) = component
                 .start()
                 .await
                 .wrap_err_with(|| format!("failed to start component[{name}] "))
             {
                 if let Err(stop_err) = self.stop_components(started).await {
-                    error!(error = ?stop_err, "rollback components failed after start error");
+                    error!(error = ?stop_err, "Rollback components failed after start error");
                 }
                 return Err(err);
             }
-            info!(component = ?name, elapsed = ?start_time.elapsed(), "component started");
+            info!(component = ?name, elapsed = ?start_time.elapsed(), "Component started");
             started.push(component.clone());
         }
 
@@ -269,12 +269,12 @@ impl Sidecar {
         for component in handles.into_iter().rev() {
             let name = component.name().to_string();
             let start_time = Instant::now();
-            info!(component = ?name, "component stopping");
+            info!(component = ?name, "Component stopping");
             component
                 .stop()
                 .await
                 .wrap_err_with(|| format!("failed to stop component[{name}] "))?;
-            info!(component = ?name, elapsed = ?start_time.elapsed(), "component stopped");
+            info!(component = ?name, elapsed = ?start_time.elapsed(), "Component stopped");
         }
 
         Ok(())
@@ -364,9 +364,9 @@ mod tests {
             }
         });
 
-        info!("robot is on");
+        info!("Robot is on");
         sidecar.run().await?;
-        info!("robot is down");
+        info!("Robot is down");
         Ok(())
     }
 
@@ -387,10 +387,10 @@ mod tests {
             })
             .await;
 
-        info!("robot is on with callbacks");
+        info!("Robot is on with callbacks");
         sidecar.run().await?;
         assert_eq!(counter.load(Ordering::SeqCst), 1);
-        info!("robot is down");
+        info!("Robot is down");
         Ok(())
     }
 
