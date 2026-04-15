@@ -70,7 +70,7 @@ pub async fn run(args: RegisterArgs, ctx: IpcContext) -> Result<()> {
 
     ensure!(
         response.code == 0,
-        "Request api failed code: {}，msg: {}",
+        "request api failed code: {}，msg: {}",
         response.code,
         response.msg
     );

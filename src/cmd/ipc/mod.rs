@@ -16,7 +16,7 @@ pub async fn run(cmd: Cmd, repo: Repo<Config>) -> Result<()> {
     let socket_path = repo.ipc_file_path();
     ensure!(
         socket_path.exists(),
-        "IPC not exists, app is not running: {}",
+        "ipc not exists, app is not running: {}",
         socket_path.display()
     );
 

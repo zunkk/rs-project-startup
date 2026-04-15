@@ -14,9 +14,6 @@ use sidecar::{setup, version};
 
 use crate::kit::config::Config;
 
-#[global_allocator]
-static GLOBAL: tikv_jemallocator::Jemalloc = tikv_jemallocator::Jemalloc;
-
 #[derive(Parser)]
 struct Cli {
     #[arg(long = "repo-root", value_name = "PATH")]

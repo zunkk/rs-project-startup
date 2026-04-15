@@ -1,6 +1,6 @@
 app-name := "rs-project-startup"
 app-description := "A framework for quickly starting a Rust project"
-app-version := env_var_or_default('app_version', 'dev')
+app-version := env('app_version', 'dev')
 app-name-underscore := replace(replace(app-name, "-", "_"), " ", "_")
 
 default:
@@ -34,6 +34,9 @@ opt-code: fix fmt clippy
 check:
     @cargo check --workspace
 
+test:
+    @cargo test --workspace
+
 generate-openapi-client:
     @cargo run --bin export_openapi
     @rm -rf target/openapi-client
@@ -65,10 +68,15 @@ package: release
     mv ./{{ app-name }} ./deploy/tools/bin/app
     tar czvf ./{{ app-name }}-{{ app-version }}.tar.gz -C ./deploy/ .
 
-package-debug: build
+package-dev: build
     rm -f ./deploy/tools/bin/app
     mv ./{{ app-name }} ./deploy/tools/bin/app
 
-package-release: release
-    rm -f ./deploy/tools/bin/app
-    mv ./{{ app-name }} ./deploy/tools/bin/app
+release-linux-amd64:
+    @APP_VERSION={{ app-version }} cross build --bin {{ app-name }} --release --target x86_64-unknown-linux-gnu
+    @cp target/x86_64-unknown-linux-gnu/release/{{ app-name }} ./{{ app-name }}-linux-amd64
+
+package-linux-amd64: release-linux-amd64
+    @rm -f ./deploy/tools/bin/app
+    @mv ./{{ app-name }}-linux-amd64 ./deploy/tools/bin/app
+    @tar czvf ./{{ app-name }}-{{ app-version }}-linux-amd64.tar.gz -C ./deploy/ .

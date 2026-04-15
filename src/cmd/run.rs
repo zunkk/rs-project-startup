@@ -56,7 +56,8 @@ impl RunArgs {
                     }
                     let v = version::current();
                     info!("Repo_root: {}", repo.root.display());
-                    info!("{} Version: {}", v.app_name, v.version);
+                    info!("App: {}", v.app_name);
+                    info!("Version: {}", v.version);
                     info!("Git_branch：{}", v.git_branch);
                     info!("Git_commit：{}", v.git_commit);
                     info!("Build_time：{}", v.build_time);

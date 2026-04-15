@@ -13,4 +13,6 @@ target/
 **/*.bak
 .env
 .serena/
-
+deploy/config.toml
+deploy/tools/bin/app*
+rs-project-startup*
