@@ -18,6 +18,7 @@ init-project-from-template:
     @sed -i '' "s/rs_project_startup/{{ app-name-underscore }}/g" src/bin/export_openapi.rs
 
 init:
+    @cargo install cargo-nextest --locked
     @brew install openapi-generator
 
 fmt:
@@ -35,7 +36,7 @@ check:
     @cargo check --workspace
 
 test:
-    @cargo test --workspace
+    @cargo nextest run --workspace --bins --lib --tests --examples --no-fail-fast
 
 generate-openapi-client:
     @cargo run --bin export_openapi

@@ -376,21 +376,30 @@ pub fn one_line_error(err: &Report) -> String {
     out
 }
 
-fn extract_location_from_debug(err: &Report) -> Option<String> {
-    let debug = format!("{:?}", err);
+fn extract_location_from_debug_text(debug: &str) -> Option<String> {
     let mut lines = debug.lines();
     while let Some(line) = lines.next() {
-        if line.trim() == "Location:"
-            && let Some(location_line) = lines.next()
-        {
-            let cleaned = strip_str(location_line);
-            let trimmed = cleaned.trim();
-            if !trimmed.is_empty() {
-                return Some(trimmed.to_string());
+        let cleaned_line = strip_str(line);
+        let trimmed_line = cleaned_line.trim();
+        if let Some(location) = trimmed_line.strip_prefix("Location:") {
+            let inline_location = location.trim();
+            if !inline_location.is_empty() {
+                return Some(inline_location.to_string());
+            }
+            if let Some(location_line) = lines.next() {
+                let cleaned = strip_str(location_line);
+                let trimmed = cleaned.trim();
+                if !trimmed.is_empty() {
+                    return Some(trimmed.to_string());
+                }
             }
         }
     }
     None
+}
+
+fn extract_location_from_debug(err: &Report) -> Option<String> {
+    extract_location_from_debug_text(&format!("{:?}", err))
 }
 
 async fn wrap_handler<Res, Fut, F>(
@@ -675,16 +684,42 @@ mod tests {
     }
 
     #[test]
-    fn extract_location_reads_location_block() {
+    fn extract_location_returns_none_when_report_has_no_location_block() {
         let _ = color_eyre::install();
         let result: std::result::Result<(), Error> = Err(Error::ApiMustRequestFromIPC);
         let report = result.wrap_err("write to ipc failed").unwrap_err();
-        let location =
-            extract_location_from_debug(&report).expect("should extract location from report");
-        assert!(location.contains("server.rs"));
+        let location = extract_location_from_debug(&report);
+        assert!(
+            location.is_none(),
+            "report without location should return none"
+        );
+    }
+
+    #[test]
+    fn extract_location_reads_inline_location_and_strips_ansi() {
+        let debug = "\
+Error:\n\
+   0: \u{1b}[91mwrite to ipc failed\u{1b}[0m\n\
+Location: \u{1b}[35msrc/api/http/server.rs\u{1b}[0m:\u{1b}[35m745\u{1b}[0m\n\
+";
+        let location = extract_location_from_debug_text(debug)
+            .expect("should extract location from debug text");
         assert!(
             !location.contains('\u{1b}'),
             "location still contains ansi escapes: {location}"
         );
+        assert!(location.contains("server.rs"));
+    }
+
+    #[test]
+    fn extract_location_reads_next_line_location_block() {
+        let debug = "\
+Error:\n\
+Location:\n\
+    \u{1b}[35msrc/api/http/server.rs:745\u{1b}[0m\n\
+";
+        let location = extract_location_from_debug_text(debug)
+            .expect("should extract location from next-line debug text");
+        assert_eq!(location, "src/api/http/server.rs:745");
     }
 }
