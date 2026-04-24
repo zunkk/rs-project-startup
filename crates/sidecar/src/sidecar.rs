@@ -115,6 +115,28 @@ impl Sidecar {
         guard.push(future);
     }
 
+    pub fn spawn_async_task<F>(&self, task: F) -> TaskHandle
+    where
+        F: Future + Send + 'static,
+        F::Output: Send + 'static,
+    {
+        let handle = TaskHandle::new();
+        let cancel_token = handle.cancellation_token();
+        let completion_handle = handle.clone();
+        self.inner.lifecycle_manager.spawn_task(async move {
+            let mut task = Box::pin(task);
+            tokio::select! {
+                _ = cancel_token.cancelled() => {
+                }
+                _ = &mut task => {
+                }
+            }
+            completion_handle.mark_complete();
+        });
+
+        handle
+    }
+
     pub fn spawn_core_task<F>(&self, task_name: impl Into<String>, task: F) -> TaskHandle
     where
         F: Future + Send + 'static,
