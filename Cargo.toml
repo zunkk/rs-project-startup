@@ -10,18 +10,6 @@ publish = false
 repository = "https://github.com/zunkk/rs-project-startup"
 build = "./build.rs"
 
-[profile.dev]
-opt-level = 0
-debug = 0
-incremental = true
-codegen-units = 256
-
-[profile.test]
-opt-level = 0
-debug = 2
-incremental = true
-codegen-units = 256
-
 [profile.release]
 opt-level = 3
 debug = 0
@@ -51,7 +39,7 @@ repository = "https://github.com/zunkk/rs-project-startup"
 
 
 [build-dependencies]
-vergen-gitcl = { version = "10.0.0-beta.6", default-features = false, features = ["build", "cargo", "rustc", "si"] }
+vergen-gitcl = { version = "10.0.0-beta.7", default-features = false, features = ["build", "cargo", "rustc", "si"] }
 
 [dependencies]
 # Internal crate dependencies.

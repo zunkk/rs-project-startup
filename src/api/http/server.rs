@@ -30,11 +30,11 @@ use strip_ansi_escapes::strip_str;
 use tokio::fs;
 use tokio::net::{TcpListener, UnixListener, UnixStream};
 use tokio::sync::RwLock;
-use tracing::{info, warn};
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 use utoipa::{Modify, OpenApi};
 use utoipa_swagger_ui::SwaggerUi;
 
+use super::{info, warn};
 use crate::api::http::user::{self, UserApiDoc};
 use crate::core::core::Core;
 use crate::kit::config::Config;
@@ -142,7 +142,7 @@ impl Server {
                 if err.kind() == io::ErrorKind::ConnectionRefused {
                     false
                 } else {
-                    warn!(err= ?err, "Check socket connect failed");
+                    warn!(err = ?err, "Check socket connect failed");
                     false
                 }
             }

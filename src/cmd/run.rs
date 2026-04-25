@@ -5,8 +5,8 @@ use sidecar::prelude::*;
 use sidecar::repo::Repo;
 use sidecar::sidecar::Sidecar;
 use sidecar::{log, version};
-use tracing::{info, warn};
 
+use super::{info, warn};
 use crate::api::http::server::Server;
 use crate::core::core::Core;
 use crate::kit::config::Config;

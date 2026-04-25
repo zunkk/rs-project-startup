@@ -76,7 +76,7 @@ pub async fn user_login(
         .get("content-type")
         .and_then(|v| v.to_str().ok())
         .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
+    let content_type = ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
         let content = resp.text().await?;
@@ -125,7 +125,7 @@ pub async fn user_refresh_token(
         .get("content-type")
         .and_then(|v| v.to_str().ok())
         .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
+    let content_type = ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
         let content = resp.text().await?;
@@ -175,7 +175,7 @@ pub async fn user_register(
         .get("content-type")
         .and_then(|v| v.to_str().ok())
         .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
+    let content_type = ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
         let content = resp.text().await?;

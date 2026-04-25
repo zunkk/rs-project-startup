@@ -7,10 +7,11 @@ use std::time::{Duration, Instant};
 use async_trait::async_trait;
 use tokio::sync::{Mutex, Notify, RwLock};
 use tokio_util::sync::CancellationToken;
-use tracing::{error, info, warn};
 
 use crate::lifecycle::LifecycleManager;
 use crate::prelude::*;
+
+crate::define_module_log_macros!("sidecar");
 
 type ComponentHandle = Arc<dyn Component>;
 type AppReadyFuture = Pin<Box<dyn Future<Output = ()> + Send>>;
@@ -147,15 +148,15 @@ impl Sidecar {
         let handle = TaskHandle::new();
         let cancel_token = handle.cancellation_token();
         let completion_handle = handle.clone();
-        info!(component = ?component_name, task = ?task_name, "Core task run");
+        tracing::info!(module = ?component_name, task = ?task_name, "Core task run");
         self.inner.lifecycle_manager.spawn_task(async move {
             let mut task = Box::pin(task);
             tokio::select! {
                 _ = cancel_token.cancelled() => {
-                    info!(component = ?component_name, task = ?task_name, "Core task cancelled");
+                    tracing::info!(module = ?component_name, task = ?task_name, "Core task cancelled");
                 }
                 _ = &mut task => {
-                    info!(component = ?component_name, task = ?task_name, "Core task down");
+                    tracing::info!(module = ?component_name, task = ?task_name, "Core task down");
                 }
             }
             completion_handle.mark_complete();
@@ -184,8 +185,8 @@ impl Sidecar {
         let completion_handle = handle.clone();
 
         self.inner.lifecycle_manager.spawn_task(async move {
-            info!(
-                component = ?component_name,
+            tracing::info!(
+                module = ?component_name,
                 task = ?task_name,
                 interval = ?interval,
                 "Scheduled task run"
@@ -195,19 +196,19 @@ impl Sidecar {
             loop {
                 tokio::select! {
                     _ = sidecar.canceled() => {
-                        info!(component = ?component_name, task = ?task_name, "Scheduled task down");
+                        tracing::info!(module = ?component_name, task = ?task_name, "Scheduled task down");
                         break;
                     }
                     _ = cancel_token.cancelled() => {
-                        info!(component = ?component_name, task = ?task_name, "Scheduled task cancelled");
+                        tracing::info!(module = ?component_name, task = ?task_name, "Scheduled task cancelled");
                         break;
                     }
                     _ = ticker.tick() => {
                         let fut = task(state.clone());
                         let result = fut.await;
                         if let Err(err) = result {
-                            warn!(
-                                component = ?component_name,
+                            tracing::warn!(
+                                module = ?component_name,
                                 task = ?task_name,
                                 error = ?err,
                                 "Scheduled task tick failed"
@@ -269,7 +270,7 @@ impl Sidecar {
         for component in &handles {
             let name = component.name().to_string();
             let start_time = Instant::now();
-            info!(component = ?name, "Component starting");
+            tracing::info!(module = ?name, "Component starting");
             if let Err(err) = component
                 .start()
                 .await
@@ -280,7 +281,7 @@ impl Sidecar {
                 }
                 return Err(err);
             }
-            info!(component = ?name, elapsed = ?start_time.elapsed(), "Component started");
+            tracing::info!(module = ?name, elapsed = ?start_time.elapsed(), "Component started");
             started.push(component.clone());
         }
 
@@ -291,12 +292,12 @@ impl Sidecar {
         for component in handles.into_iter().rev() {
             let name = component.name().to_string();
             let start_time = Instant::now();
-            info!(component = ?name, "Component stopping");
+            tracing::info!(module = ?name, "Component stopping");
             component
                 .stop()
                 .await
                 .wrap_err_with(|| format!("failed to stop component[{name}] "))?;
-            info!(component = ?name, elapsed = ?start_time.elapsed(), "Component stopped");
+            tracing::info!(module = ?name, elapsed = ?start_time.elapsed(), "Component stopped");
         }
 
         Ok(())

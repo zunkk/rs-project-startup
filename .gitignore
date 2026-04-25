@@ -12,7 +12,10 @@ target/
 **/*.rs.bk
 **/*.bak
 .env
-.serena/
 deploy/config.toml
 deploy/tools/bin/app*
 rs-project-startup*
+/qodana.yaml
+/.agents/
+/.claude/
+/.worktrees/

@@ -3,7 +3,8 @@ use tokio::signal::unix::{SignalKind, signal};
 use tokio::sync::mpsc;
 use tokio_util::sync::CancellationToken;
 use tokio_util::task::TaskTracker;
-use tracing::info;
+
+crate::define_module_log_macros!("sidecar");
 
 pub struct LifecycleManager {
     task_tracker: TaskTracker,

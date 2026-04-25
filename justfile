@@ -25,10 +25,10 @@ fmt:
     @cargo +nightly  fmt --all
 
 clippy:
-    @cargo +nightly clippy --fix --all --all-features --allow-staged --allow-dirty
+    @cargo clippy --fix --all --all-features --allow-staged --allow-dirty --workspace
 
 fix:
-    @cargo +nightly fix --allow-staged --allow-no-vcs --workspace
+    @cargo fix --allow-staged --allow-no-vcs --workspace
 
 opt-code: fix fmt clippy
 
@@ -57,11 +57,11 @@ generate-openapi-client:
       -e 's/use super::{Error, configuration, ContentType};/use super::{configuration, ContentType, Error, ResponseContent};/' {} +
 
 build:
-    APP_VERSION={{ app-version }} cargo build
+    @APP_VERSION={{ app-version }} SOURCE_DATE_EPOCH=$(date -u +"%s") cargo build
     @cp target/debug/{{ app-name }} ./
 
 release:
-    APP_VERSION={{ app-version }} cargo build --release
+    @APP_VERSION={{ app-version }} SOURCE_DATE_EPOCH=$(date -u +"%s") cargo build --release
     @cp target/release/{{ app-name }} ./
 
 package: release
@@ -74,7 +74,7 @@ package-dev: build
     mv ./{{ app-name }} ./deploy/tools/bin/app
 
 release-linux-amd64:
-    @APP_VERSION={{ app-version }} cross build --bin {{ app-name }} --release --target x86_64-unknown-linux-gnu
+    @APP_VERSION={{ app-version }} SOURCE_DATE_EPOCH=$(date -u +"%s") cross build --bin {{ app-name }} --release --target x86_64-unknown-linux-gnu
     @cp target/x86_64-unknown-linux-gnu/release/{{ app-name }} ./{{ app-name }}-linux-amd64
 
 package-linux-amd64: release-linux-amd64

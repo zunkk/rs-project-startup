@@ -5,3 +5,5 @@ pub mod repo;
 pub mod setup;
 pub mod sidecar;
 pub mod version;
+
+pub use tracing;

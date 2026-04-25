@@ -1,3 +1,6 @@
+[build.env]
+passthrough = ["APP_VERSION", "SOURCE_DATE_EPOCH"]
+
 [target.x86_64-unknown-linux-gnu]
 image = "ghcr.io/cross-rs/x86_64-unknown-linux-gnu:edge"
 pre-build = [

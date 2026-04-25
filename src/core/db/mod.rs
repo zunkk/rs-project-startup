@@ -8,10 +8,11 @@ use sidecar::prelude::*;
 use sidecar::repo::Repo;
 use sidecar::sidecar::{Component, Sidecar};
 use tokio::sync::RwLock;
-use tracing::info;
 
 use crate::kit::config::Config;
 use crate::kit::error::Error;
+
+sidecar::define_module_log_macros!("db");
 
 pub struct DB {
     sidecar: Sidecar,
