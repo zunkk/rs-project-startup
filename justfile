@@ -22,7 +22,7 @@ init:
     @brew install openapi-generator
 
 fmt:
-    @cargo +nightly  fmt --all
+    @cargo +nightly fmt --all
 
 clippy:
     @cargo clippy --fix --all --all-features --allow-staged --allow-dirty --workspace
@@ -30,7 +30,7 @@ clippy:
 fix:
     @cargo fix --allow-staged --allow-no-vcs --workspace
 
-opt-code: fix fmt clippy
+opt-code: fix clippy fmt
 
 check:
     @cargo check --workspace

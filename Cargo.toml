@@ -39,7 +39,7 @@ repository = "https://github.com/zunkk/rs-project-startup"
 
 
 [build-dependencies]
-vergen-gitcl = { version = "10.0.0-beta.8", default-features = false, features = ["build", "cargo", "rustc", "si"] }
+vergen-gitcl = { version = "10.0.1", default-features = false, features = ["build", "cargo", "rustc", "si"] }
 
 [dependencies]
 # Internal crate dependencies.
@@ -83,33 +83,33 @@ thiserror = { version = "2.0.18", default-features = false }
 tokio = { version = "1.52.3", default-features = false, features = ["rt-multi-thread", "signal", "time", "macros", "fs"] }
 tokio-util = { version = "0.7.18", default-features = false, features = ["rt"] }
 serde = { version = "1.0.228", default-features = false }
-serde_json = { version = "1.0.149", default-features = false }
+serde_json = { version = "1.0.150", default-features = false }
 humantime-serde = { version = "1.1.1", default-features = false }
 dotenv = { version = "0.15.0", default-features = false }
 async-trait = { version = "0.1.89", default-features = false }
 tracing = { version = "0.1.44", default-features = false }
 tracing-subscriber = { version = "0.3.23", default-features = false }
 tracing-appender = { version = "0.2.5", default-features = false }
-chrono = { version = "0.4.44", default-features = false, features = ["clock"] }
+chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
 clap = { version = "4.6.1", default-features = false, features = ["std", "derive"] }
 once_cell = { version = "1.21.4", default-features = false }
 tracing-panic = { version = "0.1.2", default-features = false }
-config = { version = "0.15.22", default-features = false, features = ["toml", "convert-case"] }
+config = { version = "0.15.25", default-features = false, features = ["toml", "convert-case"] }
 toml = { version = "1.1.2", default-features = false, features = ["display"] }
 color-eyre = { version = "0.6.5", default-features = false }
 axum = { version = "0.8.9", default-features = false, features = ["http1", "original-uri", "query", "tokio"] }
 url = { version = "2.5.8", default-features = false }
-regex = { version = "1.12.3", default-features = false, features = ["unicode-perl"] }
+regex = { version = "1.13.0", default-features = false, features = ["unicode-perl"] }
 axum-client-ip = { version = "1.3.1", default-features = false, features = ["forwarded-header"] }
 utoipa = { version = "5.5.0", default-features = false }
 utoipa-swagger-ui = { version = "9.0.2", default-features = false, features = ["axum", "vendored"] }
 jsonwebtoken = { version = "10.4.0", default-features = false }
-sea-orm = { version = "2.0.0-rc.38", default-features = false, features = ["macros", "with-chrono", "with-uuid", "sqlx-postgres", "runtime-tokio-rustls"] }
-uuid = { version = "1.23.1", default-features = false, features = ["v4"] }
+sea-orm = { version = "2.0.0-rc.42", default-features = false, features = ["macros", "with-chrono", "with-uuid", "sqlx-postgres", "runtime-tokio-rustls"] }
+uuid = { version = "1.23.4", default-features = false, features = ["v4"] }
 argon2 = { version = "0.6.0-rc.8", default-features = false, features = ["alloc", "getrandom"] }
-rand = { version = "0.10.1", default-features = false, features = ["thread_rng"] }
-reqwest = { version = "0.13.3", default-features = false, features = ["rustls"] }
-reqwest-middleware = { version = "0.5.1", default-features = false, features = ["json", "query"] }
+rand = { version = "0.10.2", default-features = false, features = ["thread_rng"] }
+reqwest = { version = "0.13.4", default-features = false, features = ["rustls"] }
+reqwest-middleware = { version = "0.5.2", default-features = false, features = ["json", "query"] }
 strip-ansi-escapes = { version = "0.2.1", default-features = false }
 tempfile = { version = "3.27.0", default-features = false }
-serial_test = { version = "3.4.0", default-features = false }
+serial_test = { version = "3.5.0", default-features = false }
